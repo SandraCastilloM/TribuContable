@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>InfoContable</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script>
+        function mostrarFormularios() {
+            const clave = prompt("🔐 Ingresa la contraseña para habilitar edición/agregado:");
+            if (clave === "Sandra123") {
+                document.querySelectorAll('.form-editable').forEach(el => el.style.display = 'block');
+            } else if (clave !== null) {
+                alert("❌ Contraseña incorrecta. Solo lectura habilitada.");
+            }
+        }
+        window.onload = () => {
+            document.querySelectorAll('.form-editable').forEach(el => el.style.display = 'none');
+        }
+    </script>
+</head>
+<body>
+<h1>📘 InfoContable</h1>
+
+<button onclick="mostrarFormularios()">🔐 Ingresar como Sandra</button>
+
+<!-- BUSCADOR -->
+<form method="POST">
+    <label>Búsqueda por palabra clave:</label>
+    <input type="text" name="palabra" value="{{ palabra }}" placeholder="Ej: inmueble, renta...">
+    <button type="submit">Buscar</button>
+
+    <hr>
+
+    <label>Selecciona una ley:</label>
+    <select name="ley_id" onchange="this.form.submit()">
+        <option value="">-- Selecciona --</option>
+        {% for l in leyes %}
+            <option value="{{ l.ley_id }}" {% if l.ley_id == ley_id %}selected{% endif %}>{{ l.nombre_ley }}</option>
+        {% endfor %}
+    </select>
+
+    {% if ley_id %}
+        <label>Selecciona un artículo:</label>
+        <input list="lista_articulos" name="articulo" placeholder="Escribe o selecciona">
+        <datalist id="lista_articulos">
+            {% for a in articulos|sort(attribute='articulo', reverse=false) %}
+                <option value="{{ a.articulo }}">Art. {{ a.articulo }}{% if a.numero %} N°{{ a.numero }}{% endif %}{% if a.letra %} letra {{ a.letra }}{% endif %}</option>
+            {% endfor %}
+        </datalist>
+        <button type="submit">Ver Artículo</button>
+    {% endif %}
+</form>
+
+<hr>
+
+<!-- RESULTADOS -->
+{% if resultados|length > 0 %}
+<h2>🔎 Resultados</h2>
+{% for r in resultados %}
+<details>
+    <summary>{{ r.nombre_ley }} - Art. {{ r.articulo }}{% if r.numero %} N°{{ r.numero }}{% endif %}{% if r.letra %} letra {{ r.letra }}{% endif %}</summary>
+    <p><strong>Descripción:</strong><br>{{ r.descripcion }}</p>
+
+    <form method="POST" action="/actualizar" class="form-editable">
+        <input type="hidden" name="ley_id" value="{{ r.ley_id }}">
+        <input type="hidden" name="articulo" value="{{ r.articulo }}">
+        <label>Explicación:</label>
+        <textarea name="explicacion" rows="4" style="width:100%">{{ r.explicacion }}</textarea>
+        <button type="submit">💾 Guardar</button>
+    </form>
+</details>
+{% endfor %}
+{% elif palabra or (ley_id and articulo) %}
+<p>No se encontraron resultados.</p>
+{% endif %}
+
+<hr>
+
+<!-- AGREGAR NUEVO -->
+<div class="form-editable">
+<h2>➕ Agregar nueva ley o artículo</h2>
+<form method="POST" action="/agregar">
+    <label>Selecciona una ley existente o escribe una nueva:</label>
+    <select name="n_ley_id">
+        <option value="">-- Nueva o selecciona --</option>
+        {% for l in leyes %}
+            <option value="{{ l.ley_id }}">{{ l.nombre_ley }}</option>
+        {% endfor %}
+    </select>
+
+    <label>Nombre completo de la ley (si es nueva):</label>
+    <input type="text" name="n_nombre_ley" placeholder="Ej: Código Civil">
+
+    <label>Número de artículo:</label>
+    <input type="text" name="n_articulo" required>
+
+    <label>Sub-número (opcional):</label>
+    <input type="text" name="n_numero">
+
+    <label>Letra (opcional):</label>
+    <input type="text" name="n_letra">
+
+    <label>Descripción:</label>
+    <textarea name="n_descripcion" rows="3" required></textarea>
+
+    <label>Explicación (opcional):</label>
+    <textarea name="n_explicacion" rows="3"></textarea>
+
+    <button type="submit">➕ Guardar nuevo artículo</button>
+</form>
+</div>
+<footer style="text-align:center; font-size:small; margin-top:40px;">
+    <hr>
+    <p>Desarrollado por Sandra Castillo Muñoz</p>
+</footer>
+</body>
+</html>
+
+
+
+
