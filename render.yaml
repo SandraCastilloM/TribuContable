@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: tribucontable
+    env: python
+    buildCommand: ""
+    startCommand: gunicorn aplicacion:aplicacion
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11

@@ -1,0 +1,76 @@
+
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 30px auto;
+    max-width: 800px;
+    background: #ffffff;
+    color: #333333;
+    font-size: 18px;
+    padding: 20px;
+    line-height: 1.6;
+}
+input[type="text"], select, button {
+    width: 50%;
+    display: block;               /* Hace que se pueda centrar */
+    margin: 0 auto 20px auto;     /* Centrado y espacio abajo */
+    padding: 14px 30px;           /* Más gordito */
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+    font-size: 16px;
+}
+input[type="text"] {
+    text-align: left;
+}
+button {
+    display: inline-block;
+    text-align: left;
+    margin-left: 0;
+}
+button {
+    background: linear-gradient(90deg, gray, #06b6d4); /* Degradado azul a celeste */
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 14px 30px;
+    border-radius: 999px; /* redondeado como píldora */
+    transition: all 0.3s ease;
+    box-shadow: 2px 2px 6px rgba(0,0,0,0.1); 
+}
+button:hover {
+    background: linear-gradient(90deg, #06b6d4, #4f46e5); /* Inversión al pasar el mouse */
+    transform: translateY(-3px); /* flotante */
+    box-shadow: 4px 4px 12px rgba(0,0,0,0.15);
+}
+h1 {
+    color: #1f2937;
+    font-size: 32px;
+    margin-bottom: 20px;
+    text-align: left;
+}
+details {
+    margin-top: 15px;
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 15px;
+}
+summary {
+    cursor: pointer;
+    font-weight: bold;
+    color: #111827;
+    font-size: 18px;
+}
+form * {
+    display: block;
+    margin: 8px 0;
+}
+input,
+textarea,
+select {
+    width: 100%;
+    max-width: 400px;
+    box-sizing: border-box;
+}

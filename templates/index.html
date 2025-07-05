@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>TribuContable</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<h1>📘 TribuContable</h1>
+
+<!-- BUSCADOR -->
+<!-- FORMULARIO 1: Búsqueda por palabra -->
+<form method="POST" style="margin-bottom: 30px;">
+    <label style="display: block;">Búsqueda por palabra clave:</label>
+    <input 
+        type="text" 
+        name="palabra" 
+        value="{{ palabra }}" 
+        style="display: block; width: 100%; max-width: none; text-align: left; font-size: 16px; padding: 8px; border: 1px solid #ccc; box-sizing: border-box; background-color: #f2f2f2;;">
+    <button type="submit">Buscar</button>
+</form>
+
+{% if mostrar_correccion %}
+    <p style="color: #666; font-size: 0.9em; margin-top: -10px; margin-bottom: 20px;">
+        Buscaste: <em>{{ palabra_original }}</em><br>
+        Corrigiendo a: <strong>{{ palabra_corregida }}</strong>
+    </p>
+{% endif %}
+
+<hr style="margin: 20px 0; border: none; border-top: 1px solid #ccc;">
+    <hr>
+
+    <form method="POST">
+    <label>¿Qué estás buscando? 😊 ¿Normas? ¿Leyes? </label>
+    <select name="ley_id" onchange="this.form.submit()" style="width: 100%;">
+        <option value="">-- Selecciona --</option>
+        {% for l in leyes %}
+            <option value="{{ l.ley_id }}" {% if l.ley_id == ley_id %}selected{% endif %}>{{ l.nombre_ley }}</option>
+        {% endfor %}
+    </select>
+
+    {% if ley_id %}
+        <label>Selecciona un artículo o número:</label>
+        <select name="articulo" style="width: 100%;">
+            {% for a in articulos|sort(attribute='articulo', reverse=true) %}
+                <option value="{{ a.articulo }}" {% if a.articulo == articulo %}selected{% endif %}>
+                    Art. {{ a.articulo }}{% if a.numero %} N°{{ a.numero }}{% endif %}{% if a.letra %} letra {{ a.letra }}{% endif %}
+                </option>
+            {% endfor %}
+        </select>
+        <button type="submit">Ver Artículo</button>
+    {% endif %}
+</form>
+
+<hr>
+
+<!-- RESULTADOS -->
+{% if resultados|length > 0 %}
+<h2>🔎 Resultados</h2>
+{% for r in resultados %}
+<details>
+    <summary>{{ r.nombre_ley }} - Art. {{ r.articulo }}{% if r.numero %} N°{{ r.numero }}{% endif %}{% if r.letra %} letra {{ r.letra }}{% endif %}</summary>
+    <p style="text-align: justify;">{{ r.descripcion|safe }}</p>
+    <form method="POST" action="/actualizar" class="form-editable">
+        <input type="hidden" name="ley_id" value="{{ r.ley_id }}">
+        <input type="hidden" name="articulo" value="{{ r.articulo }}">
+        <label>Explicación:</label>
+        <textarea name="explicacion" rows="4" style="width:100%">{{ r.explicacion }}</textarea>
+        <button type="submit">💾 Guardar</button>
+    </form>
+</details>
+{% endfor %}
+{% elif palabra or (ley_id and articulo) %}
+<p>No se encontraron resultados.</p>
+    {% if sugerencia %}
+    <form method="POST">
+    <input type="hidden" name="palabra" value="{{ sugerencia }}">
+    <p style="color: gray;">
+        ¿Quizás quisiste decir: 
+        <button type="submit" style="background: none; border: none; color: blue; text-decoration: underline; cursor: pointer;">
+            {{ sugerencia }}
+        </button>?
+    </p>
+</form>
+
+    {% endif %}
+{% endif %}
+
+<hr>
+
+
+<footer style="text-align:left; font-size:small; margin-top:40px;">
+    <hr>
+    <p>Desarrollado por Sandra Castillo Muñoz</p>
+</footer>
+</body>
+</html>
+
+
+
+
